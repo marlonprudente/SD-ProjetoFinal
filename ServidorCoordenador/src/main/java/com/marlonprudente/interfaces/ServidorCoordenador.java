@@ -6,11 +6,12 @@
 package com.marlonprudente.interfaces;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  *
  * @author Marlon Prudente <marlon.oliveira at alunos.utfpr.edu.br>
  */
 public interface ServidorCoordenador extends Remote{
-    
+    public void ConsultarTransacao(int transacaoId) throws RemoteException;
 }
