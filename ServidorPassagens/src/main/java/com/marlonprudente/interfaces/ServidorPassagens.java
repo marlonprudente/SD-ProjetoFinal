@@ -7,6 +7,7 @@ package com.marlonprudente.interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public interface ServidorPassagens extends Remote{
     public List<String> ConsultarPassagens() throws RemoteException;
     public boolean ComprarPassagemUnitaria(int id, int quantidade) throws RemoteException;
     public boolean ComprarPassagemPacote(int id, int quantidade) throws RemoteException;
+    public void AdicionarPassagem(Integer id, Integer poltronas, String para, String de, Date data, Integer valor) throws RemoteException;
     public void VerificarTransacoesPendentes() throws RemoteException;
     public void ConfirmarTransacaoPendente(int transacaoId) throws RemoteException;
     
