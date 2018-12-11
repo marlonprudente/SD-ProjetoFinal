@@ -37,10 +37,11 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     @Override
     public List<String> ConsultarPassagens() throws RemoteException {
+        System.out.println("Consulta de passagens solicitada.");
         List<String> listaPassagens = new ArrayList<>();
 
         for (Passagem p : passagens) {
-            listaPassagens.add("Id: " + p.getId() + " De: " + p.getDe() + " Para: " + p.getPara() + " Valor: " + p.getValor());
+            listaPassagens.add("Id: " + p.getId() + " De: " + p.getDe() + " Para: " + p.getPara() + " Valor: " + p.getValor() + " Disponiveis: " + p.getPoltronas());
         }
 
         return listaPassagens;
@@ -48,12 +49,14 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     @Override
     public void AdicionarPassagem(Integer id, Integer poltronas, String para, String de, Date data, Integer valor) throws RemoteException {
+        System.out.println("Adicionando nova passagem");
         Passagem p = new Passagem(id, poltronas, para, de, data, valor);
         passagens.add(p);
     }
 
     @Override
     public synchronized boolean ComprarPassagemUnitaria(int id, int quantidade) throws RemoteException {
+        System.out.println("Compra de passagem solicitada.");
         for (Passagem p : passagens) {
             if (p.getId().equals(id)) {
                 if (p.getPoltronas() < quantidade) {
@@ -68,9 +71,11 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     @Override
     public synchronized boolean ComprarPassagemPacote(int id, int quantidade, int transacaoId) throws RemoteException {
+        System.out.println("Compra de pacote solicitada");
         for (Passagem p : passagens) {
             if (p.getId().equals(id)) {
                 if (p.getPoltronas() < quantidade) {
+                    System.out.println("Não existe poltronas disponíveis para essa quantidade.");
                     return false;
                 }
                 p.setPoltronas(p.getPoltronas() - quantidade);
@@ -78,6 +83,7 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
                 t.TransacaoPassagem(transacaoId, quantidade, id);
                 transacoes.add(t);
                 salvarTransacoes();
+                System.out.println("Pacote passagem vendido.");
                 return true;
             }
         }
@@ -86,6 +92,7 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     @Override
     public void VerificarTransacoesPendentes() throws RemoteException {
+        System.out.println("Verificando Transacoes pendentes");
         if (transacoes.isEmpty()) {
             recuperarTransacoes();
         }
@@ -93,7 +100,8 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
         for (Transacao t : transacoes) {
             System.out.println("Transacao Id: " + t.getId() + " Status: " + t.getStatusTransacao());
             if (t.getStatusTransacao() == 1) {
-                if (this.coordenador.ConsultarTransacao(t.getId()) == 2) {
+                int statusTransacao = this.coordenador.ConsultarTransacao(t.getId());
+                if (statusTransacao == 2) {
                     //confirmar
                     System.out.println("Confirmando Transacao Id: " + t.getId());
                     t.confirmarTransacao();
@@ -108,6 +116,7 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     @Override
     public void ConfirmarTransacaoPendente(int transacaoId) throws RemoteException {
+        System.out.println("Confirmando transacao de ID: " + transacaoId);
         if (transacoes.isEmpty()) {
             recuperarTransacoes();
         }
@@ -170,6 +179,7 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
     @Override
     public void setServidorCoordenador(ServidorCoordenador coordenador) throws RemoteException {
         this.coordenador = coordenador;
+        VerificarTransacoesPendentes();
     }
 
 }

@@ -22,8 +22,7 @@ import java.util.Scanner;
  */
 public class PassagensMain {
     public static void main(String[] args) {
-                ServidorPassagens servidorPassagens = null;
-        ServidorCoordenador servidorCoordenador = null;
+        ServidorPassagens servidorPassagens = null;        
 
         try {
             servidorPassagens = new ServidorPassagensImplements();
@@ -35,14 +34,20 @@ public class PassagensMain {
         try {
             Registry servicoNomesRMI = LocateRegistry.createRegistry(2002);
             servicoNomesRMI.rebind("passagens", servidorPassagens);            
-                while (true) {                
+                while (true) { 
+                System.out.println("1 - Cadastrar Passagens");
+                System.out.println("2 - Verificar Transacoes Pendentes");
                 Scanner scanner = new Scanner(System.in);
                 Integer op = scanner.nextInt();
                 String input;
                 switch (op) {
                     case 1:
                         DateFormat df = new SimpleDateFormat("dd/mm/yyyy", Locale.ENGLISH);
-                        servidorPassagens.AdicionarPassagem(1, 10, "", "", df.parse("09/12/2018"), 100);
+                        servidorPassagens.AdicionarPassagem(1, 10, "CWB", "SP", df.parse("09/12/2018"), 100);
+                        servidorPassagens.AdicionarPassagem(2, 15, "SP", "CWB", df.parse("12/12/2018"), 150);
+                        servidorPassagens.AdicionarPassagem(3, 3, "CWB", "MG", df.parse("14/12/2018"), 200);
+                        servidorPassagens.AdicionarPassagem(4, 11, "MG", "CWB", df.parse("19/12/2018"), 210);
+                        servidorPassagens.AdicionarPassagem(5, 45, "CWB", "Lisboa", df.parse("23/12/2018"), 1000);
                         break;
                     case 2:
                         Registry servicoNomesCoordenador = LocateRegistry.getRegistry(2001);            
