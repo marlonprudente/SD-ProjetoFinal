@@ -5,6 +5,7 @@
  */
 package com.marlonprudente.servidorpassagens;
 
+import com.marlonprudente.interfaces.ServidorCoordenador;
 import com.marlonprudente.transacoesutils.Passagem;
 import com.marlonprudente.interfaces.ServidorPassagens;
 import com.marlonprudente.transacoesutils.Transacao;
@@ -28,7 +29,7 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     List<Passagem> passagens = new ArrayList<>();
     List<Transacao> transacoes = new ArrayList<>();
-    
+    ServidorCoordenador coordenador;
 
     protected ServidorPassagensImplements() throws RemoteException {
         super();
@@ -37,25 +38,25 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
     @Override
     public List<String> ConsultarPassagens() throws RemoteException {
         List<String> listaPassagens = new ArrayList<>();
-        
-        for(Passagem p : passagens){
+
+        for (Passagem p : passagens) {
             listaPassagens.add("Id: " + p.getId() + " De: " + p.getDe() + " Para: " + p.getPara() + " Valor: " + p.getValor());
         }
-        
+
         return listaPassagens;
     }
-    
+
     @Override
     public void AdicionarPassagem(Integer id, Integer poltronas, String para, String de, Date data, Integer valor) throws RemoteException {
-        Passagem p = new Passagem(id,poltronas,para,de,data,valor);
+        Passagem p = new Passagem(id, poltronas, para, de, data, valor);
         passagens.add(p);
     }
 
     @Override
     public synchronized boolean ComprarPassagemUnitaria(int id, int quantidade) throws RemoteException {
-        for(Passagem p : passagens){
-            if(p.getId().equals(id)){
-                if(p.getPoltronas() < quantidade){
+        for (Passagem p : passagens) {
+            if (p.getId().equals(id)) {
+                if (p.getPoltronas() < quantidade) {
                     return false;
                 }
                 p.setPoltronas(p.getPoltronas() - quantidade);
@@ -66,14 +67,15 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
     }
 
     @Override
-    public synchronized boolean ComprarPassagemPacote(int id, int quantidade) throws RemoteException {
-                for(Passagem p : passagens){
-            if(p.getId().equals(id)){
-                if(p.getPoltronas() < quantidade){
+    public synchronized boolean ComprarPassagemPacote(int id, int quantidade, int transacaoId) throws RemoteException {
+        for (Passagem p : passagens) {
+            if (p.getId().equals(id)) {
+                if (p.getPoltronas() < quantidade) {
                     return false;
                 }
                 p.setPoltronas(p.getPoltronas() - quantidade);
-                Transacao t = new Transacao(transacoes.size(),quantidade,id);
+                Transacao t = new Transacao();
+                t.TransacaoPassagem(transacaoId, quantidade, id);
                 transacoes.add(t);
                 salvarTransacoes();
                 return true;
@@ -84,17 +86,43 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     @Override
     public void VerificarTransacoesPendentes() throws RemoteException {
-        recuperarTransacoes();
-        
-        for(Transacao t : transacoes){
-            System.out.println("Id: " + t.getIdPassagem());
+        if (transacoes.isEmpty()) {
+            recuperarTransacoes();
         }
-        
+        int index = 0;
+        for (Transacao t : transacoes) {
+            System.out.println("Transacao Id: " + t.getId() + " Status: " + t.getStatusTransacao());
+            if (t.getStatusTransacao() == 1) {
+                if (this.coordenador.ConsultarTransacao(t.getId()) == 2) {
+                    //confirmar
+                    System.out.println("Confirmando Transacao Id: " + t.getId());
+                    t.confirmarTransacao();
+                    transacoes.set(index, t);
+
+                }
+            }
+            index++;
+        }
+
     }
 
     @Override
     public void ConfirmarTransacaoPendente(int transacaoId) throws RemoteException {
-        System.out.println("ID: " + transacaoId);//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (transacoes.isEmpty()) {
+            recuperarTransacoes();
+        }
+        int index = 0;
+        for (Transacao t : transacoes) {
+            if (t.getId() == transacaoId) {
+                if (t.getStatusTransacao() == 1) {
+                    //confirmar
+                    t.confirmarTransacao();
+                    transacoes.set(index, t);
+                    salvarTransacoes();
+                }
+            }
+            index++;
+        }
     }
 
     public void salvarTransacoes() {
@@ -114,22 +142,22 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
     }
 
     public void recuperarTransacoes() {
-
         boolean cont = true;
         try {
             FileInputStream fi = new FileInputStream(new File("transacoes.txt"));
             ObjectInputStream oi = new ObjectInputStream(fi);
 
-            while (cont) {  
+            while (cont) {
                 Transacao transacao = (Transacao) oi.readObject();
                 if (transacao != null) {
-                    if(!transacoes.contains(transacao))                    
-                        transacoes.add((Transacao)transacao);
+                    if (!transacoes.contains(transacao)) {
+                        transacoes.add((Transacao) transacao);
+                    }
                 } else {
                     cont = false;
                 }
-                
-            }            
+
+            }
             oi.close();
             fi.close();
 
@@ -139,6 +167,9 @@ public class ServidorPassagensImplements extends UnicastRemoteObject implements 
 
     }
 
-    
+    @Override
+    public void setServidorCoordenador(ServidorCoordenador coordenador) throws RemoteException {
+        this.coordenador = coordenador;
+    }
 
 }

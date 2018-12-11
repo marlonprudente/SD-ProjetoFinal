@@ -5,6 +5,7 @@
  */
 package com.marlonprudente.servidorpassagens;
 
+import com.marlonprudente.interfaces.ServidorCoordenador;
 import com.marlonprudente.interfaces.ServidorPassagens;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -22,11 +23,11 @@ import java.util.Scanner;
 public class PassagensMain {
     public static void main(String[] args) {
                 ServidorPassagens servidorPassagens = null;
-        //ServidorCoordenador servidorCoordenador = null;
+        ServidorCoordenador servidorCoordenador = null;
 
         try {
             servidorPassagens = new ServidorPassagensImplements();
-            //servidorCoordenador = new ServidorCoordenadorImplements();
+            
         } catch (RemoteException e) {
             System.out.println("Main: " + e);
         }
@@ -34,7 +35,6 @@ public class PassagensMain {
         try {
             Registry servicoNomesRMI = LocateRegistry.createRegistry(2002);
             servicoNomesRMI.rebind("passagens", servidorPassagens);            
-            
                 while (true) {                
                 Scanner scanner = new Scanner(System.in);
                 Integer op = scanner.nextInt();
@@ -43,11 +43,11 @@ public class PassagensMain {
                     case 1:
                         DateFormat df = new SimpleDateFormat("dd/mm/yyyy", Locale.ENGLISH);
                         servidorPassagens.AdicionarPassagem(1, 10, "", "", df.parse("09/12/2018"), 100);
-                        servidorPassagens.ComprarPassagemPacote(1, 2);
-                        servidorPassagens.ComprarPassagemPacote(1, 2);
-                        servidorPassagens.ComprarPassagemPacote(1, 2);
                         break;
                     case 2:
+                        Registry servicoNomesCoordenador = LocateRegistry.getRegistry(2001);            
+                        ServidorCoordenador coordenador = (ServidorCoordenador)servicoNomesCoordenador.lookup("coordenador");
+                        servidorPassagens.setServidorCoordenador(coordenador);
                         servidorPassagens.VerificarTransacoesPendentes();
                         break;
                     default:
