@@ -1,0 +1,8 @@
+dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: Logger name: com.marlonprudente.cliente.ClienteMain
+dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: Registro 2001RegistryImpl_Stub[UnicastRef [liveRef: [endpoint:[192.168.56.1:2001](remote),objID:[0:0:0, 0]]]]
+dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: lookup coordenador Proxy[ClienteCoordenador,RemoteObjectInvocationHandler[UnicastRef [liveRef: [endpoint:[192.168.56.1:9187](remote),objID:[-35ace9bb:1677a2b3ceb:-7fff, 6683049617523091340]]]]]
+dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: Conectou ao Coordenador: 
