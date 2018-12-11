@@ -19,4 +19,5 @@ public interface ClienteCoordenador extends Remote{
     public boolean ComprarPassagem(int id, int quantidade) throws RemoteException;
     public boolean ReservarHotel(int id, int quantidade) throws RemoteException;
     public boolean ComprarPacote(int PassagemId, int hotelId, int quantidade) throws RemoteException;
+    public void setServidorPassagens(ServidorPassagens passagens) throws RemoteException;
 }
