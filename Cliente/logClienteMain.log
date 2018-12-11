@@ -1,8 +1,12 @@
-dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
+dez 11, 2018 9:34:44 PM com.marlonprudente.cliente.ClienteMain main
 INFORMA합ES: Logger name: com.marlonprudente.cliente.ClienteMain
-dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
-INFORMA합ES: Registro 2001RegistryImpl_Stub[UnicastRef [liveRef: [endpoint:[192.168.56.1:2001](remote),objID:[0:0:0, 0]]]]
-dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
-INFORMA합ES: lookup coordenador Proxy[ClienteCoordenador,RemoteObjectInvocationHandler[UnicastRef [liveRef: [endpoint:[192.168.56.1:9187](remote),objID:[-35ace9bb:1677a2b3ceb:-7fff, 6683049617523091340]]]]]
-dez 04, 2018 3:02:00 PM com.marlonprudente.cliente.ClienteMain main
-INFORMA합ES: Conectou ao Coordenador: 
+dez 11, 2018 9:34:45 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: Registro 2001: RegistryImpl_Stub[UnicastRef [liveRef: [endpoint:[192.168.56.1:2001](remote),objID:[0:0:0, 0]]]]
+dez 11, 2018 9:34:45 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: lookup coordenador: Proxy[ServidorCoordenador,RemoteObjectInvocationHandler[UnicastRef [liveRef: [endpoint:[192.168.56.1:48964](remote),objID:[4fa695ec:1679f9cde59:-7fff, -8281290917069330842]]]]]
+dez 11, 2018 9:34:45 PM com.marlonprudente.cliente.ClienteMain main
+INFORMA합ES: Conectou ao Coordenador
+dez 11, 2018 9:40:44 PM com.marlonprudente.cliente.ClienteMain main
+GRAVE: Main cliente: java.rmi.ServerException: RemoteException occurred in server thread; nested exception is: 
+	java.rmi.ConnectException: Connection refused to host: 192.168.56.1; nested exception is: 
+	java.net.ConnectException: Connection refused: connect
