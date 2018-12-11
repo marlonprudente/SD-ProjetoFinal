@@ -33,6 +33,10 @@ public class Hoteis implements Serializable{
     public String getLocalizacao(){
         return this.localizacao;
     }
+    
+    public int getId(){
+        return this.id;
+    }
     public void setLocalizacao(String novaLocalizacao){
         this.localizacao = novaLocalizacao;
     }
@@ -41,7 +45,10 @@ public class Hoteis implements Serializable{
     }
     public void setNome(String novoNome){
         this.nome = novoNome;
-    }  
+    }
+    public int getQuartosDisponiveis(){
+        return this.quartosDisponiveis;
+    }
     public void setQuartosDisponiveis(Integer novaQuantidade){
         this.quartosDisponiveis = novaQuantidade;
     }  
