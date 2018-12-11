@@ -44,7 +44,10 @@ public class ServidorCoordenadorImplements extends UnicastRemoteObject implement
 
     @Override
     public List<String> ConsultarHoteis() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       System.out.println("Consultando Hoteis");
+        List<String> listaHoteis = new ArrayList<String>();
+        listaHoteis = this.hoteis.ConsultarHoteis();
+        return listaHoteis;
     }
 
     @Override
@@ -54,7 +57,7 @@ public class ServidorCoordenadorImplements extends UnicastRemoteObject implement
 
     @Override
     public boolean ReservarHotel(int id, int quantidade) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.hoteis.ReservarHotelUnitario(id, quantidade);
     }
 
     @Override
@@ -64,30 +67,35 @@ public class ServidorCoordenadorImplements extends UnicastRemoteObject implement
         }
         Transacao t = new Transacao();
         int index = transacoes.size() + 1;
+        System.out.println("Id nova Transacao: " + index);
         t.Transacao(index, quantidade, PassagemId, hotelId);
         transacoes.add(t);
         boolean passagemRetorno = this.passagens.ComprarPassagemPacote(PassagemId, quantidade, index);
-        boolean hoteisRetorno = this.hoteis.ReservarHotelPacote(index, quantidade, hotelId);
-
+        System.out.println("Passagem: " + passagemRetorno);
+        boolean hoteisRetorno = this.hoteis.ReservarHotelPacote(hotelId, quantidade, index);
+        System.out.println("Hoteis: " + hoteisRetorno);
         boolean confirmacaoPacote = (passagemRetorno && hoteisRetorno);
-
+        Transacao aux = null;
         if (confirmacaoPacote) {
             for (Transacao t2 : transacoes) {
                 if (t2.getId() == index) {
                     t2.confirmarTransacao();
-                    transacoes.set(index, t2);
-                    salvarTransacoes();
+                    aux = t2;
                 }
             }
+            transacoes.set(index - 1, aux);
+            salvarTransacoes();
             this.passagens.ConfirmarTransacaoPendente(index);
             this.hoteis.ConfirmarTransacaoPendente(index);
         }
+
 
         return confirmacaoPacote;
     }
 
     @Override
     public int ConsultarTransacao(int transacaoId) throws RemoteException {
+        System.out.println("Consulta de status da transacao ID: " + transacaoId);
         if (transacoes.isEmpty()) {
             recuperarTransacoes();
         }
@@ -95,6 +103,7 @@ public class ServidorCoordenadorImplements extends UnicastRemoteObject implement
         for (Transacao t : transacoes) {
             if (t.getId() == transacaoId) {
                 transacaoStatus = t.getStatusTransacao();
+                System.out.println("Status: " + transacaoStatus);
             }
         }
         return transacaoStatus;
@@ -150,5 +159,15 @@ public class ServidorCoordenadorImplements extends UnicastRemoteObject implement
             System.out.println("Erro: " + e);
         }
 
+    }
+
+    @Override
+    public void ConsultarTransacoes() throws RemoteException {
+        if (transacoes.isEmpty()) {
+            recuperarTransacoes();
+        }
+        for(Transacao t : transacoes){
+            System.out.println("Id: " + t.getId() + " PassagemId: " + t.getIdPassagem() + " HotelId: " + t.getIdHotel() + " Status: " + t.getStatusTransacao());
+        }
     }
 }

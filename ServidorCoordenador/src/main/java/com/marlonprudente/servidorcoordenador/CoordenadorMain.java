@@ -46,16 +46,20 @@ private static final Logger log = Logger.getLogger(CoordenadorMain.class.getName
             Registry servicoNomesPassagens = LocateRegistry.getRegistry(2002);            
             ServidorPassagens passagens = (ServidorPassagens)servicoNomesPassagens.lookup("passagens");
             coordenador.setServidorPassagens(passagens);
+            passagens.setServidorCoordenador(coordenador);
             log.info("Conectado ao registro 2002 ServidorPassagens.");
-
+            Registry servicoNomesHoteis = LocateRegistry.getRegistry(2003);            
+            ServidorHoteis hoteis = (ServidorHoteis)servicoNomesHoteis.lookup("hoteis");
+            coordenador.setServidorHoteis(hoteis);
+            hoteis.setServidorCoordenador(coordenador);
+            log.info("Conectado ao registro 2003 ServidorHoteis.");
             while (true) {
-                System.out.println("Entrei no loop");
+                System.out.println("1 - Verificar Transacoes");
                 Scanner scanner = new Scanner(System.in);
                 Integer op = scanner.nextInt();
-                String input;
                 switch (op) {
                     case 1:
-                        passagens.ConfirmarTransacaoPendente(1);
+                        coordenador.ConsultarTransacoes();
                         break;
                     default:
                         System.out.println("Opção Inválida!");
